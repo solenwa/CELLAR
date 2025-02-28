@@ -3,8 +3,9 @@ import './App.css';
 import Errorpage from './pages/Errorpage';
 import Homepage from './pages/Homepage';
 import RootLayout from './pages/RootLayout';
-import WinesList, { winesLoader } from './pages/WinesList';
-import WineDetail, { wineLoader } from './pages/WineDetail';
+import WinesList from './pages/WinesList';
+import WineDetail from './pages/WineDetail';
+import { wineLoader, winesLoader } from './loaders/loaders';
 
 const router = createBrowserRouter([
   {
@@ -20,8 +21,8 @@ const router = createBrowserRouter([
         children: [
           {
             path: ':wineId',
-            element: <WineDetail />,
             loader: wineLoader,
+            element: <WineDetail />,
           },
         ],
       },

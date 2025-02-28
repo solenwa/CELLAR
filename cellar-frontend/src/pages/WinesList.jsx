@@ -1,5 +1,4 @@
-import { Suspense } from 'react';
-import { Await, Link, useLoaderData } from 'react-router-dom';
+import { Link, useLoaderData } from 'react-router-dom';
 
 /* const products = [
   {
@@ -46,60 +45,44 @@ import { Await, Link, useLoaderData } from 'react-router-dom';
 ]; */
 
 function WinesList() {
-  const { products } = useLoaderData();
-  return (
-    <Suspense fallback={<p style={{ textalign: 'center' }}>Loading...</p>}>
-      <Await resolve={products}>
-        <div className="bg-white">
-          <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-            <h2 className="sr-only">Products</h2>
+  const products = useLoaderData();
 
-            <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-              {products.map((product) => (
-                <Link
-                  key={product.id}
-                  href={`/allwines/${product.id}`}
-                  className="group"
-                >
-                  <img
-                    alt={product.imageAlt}
-                    src={product.imageSrc}
-                    className="aspect-square w-full rounded-lg bg-gray-200 object-cover group-hover:opacity-75 xl:aspect-7/8"
-                  />
-                  <h3 className="mt-4 text-sm text-gray-700">{product.name}</h3>
-                  <p className="mt-1 text-lg font-medium text-gray-900">
-                    {product.year}
-                  </p>
-                </Link>
-              ))}
-            </div>
-          </div>
+  if (products.isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (products.isError) {
+    return <div>Error loading products.</div>;
+  }
+
+  return (
+    <div className="bg-white">
+      <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+        <h2 className="sr-only">Products</h2>
+
+        <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+          {products &&
+            products.map((product) => (
+              <Link
+                key={product._id}
+                href={`/allwines/${product._id}`}
+                className="group"
+              >
+                <img
+                  alt={product.domaine}
+                  src={product.image.url}
+                  className="aspect-square w-full rounded-lg bg-gray-200 object-cover group-hover:opacity-75 xl:aspect-7/8"
+                />
+                <h3 className="mt-4 text-sm text-gray-700">{product.cuvee}</h3>
+                <p className="mt-1 text-lg font-medium text-gray-900">
+                  {product.millesime}
+                </p>
+              </Link>
+            ))}
         </div>
-      </Await>
-    </Suspense>
+      </div>
+    </div>
   );
 }
 
 export default WinesList;
-
-export async function loadWines() {
-  const response = await fetch('http://localhost:4000/api/products');
-
-  if (!response.ok) {
-    return new Response(
-      { message: 'Could not fetch wines.' },
-      {
-        status: 500,
-      }
-    );
-  } else {
-    const resData = await response.json();
-    return resData.products;
-  }
-}
-
-export function winesLoader() {
-  return {
-    events: loadWines(),
-  };
-}
