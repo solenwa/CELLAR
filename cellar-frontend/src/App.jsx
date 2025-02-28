@@ -3,7 +3,8 @@ import './App.css';
 import Errorpage from './pages/Errorpage';
 import Homepage from './pages/Homepage';
 import RootLayout from './pages/RootLayout';
-import WinesList from './pages/WinesList';
+import WinesList, { winesLoader } from './pages/WinesList';
+import WineDetail, { wineLoader } from './pages/WineDetail';
 
 const router = createBrowserRouter([
   {
@@ -12,7 +13,18 @@ const router = createBrowserRouter([
     errorElement: <Errorpage />,
     children: [
       { index: true, element: <Homepage /> },
-      { path: '/allwines', element: <WinesList /> },
+      {
+        path: 'allwines',
+        loader: winesLoader,
+        element: <WinesList />,
+        children: [
+          {
+            path: ':wineId',
+            element: <WineDetail />,
+            loader: wineLoader,
+          },
+        ],
+      },
     ],
   },
 ]);

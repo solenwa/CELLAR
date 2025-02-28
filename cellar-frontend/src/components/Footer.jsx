@@ -56,14 +56,12 @@ function Footer() {
           À boire
         </Link>
         <Link href="#" className="">
-          Lieux
+          Ma Cave
         </Link>
         <Link href="#" className="">
-          Événements
+          Mes dégustations
         </Link>
-        <Link href="#" className="">
-          Autres
-        </Link>
+
         <Link href="#" className="">
           Contact
         </Link>
