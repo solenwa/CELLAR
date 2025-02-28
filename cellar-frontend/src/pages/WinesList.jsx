@@ -1,49 +1,5 @@
 import { Link, useLoaderData } from 'react-router-dom';
 
-/* const products = [
-  {
-    id: 1,
-    name: "Réserve de l'Aïeul",
-    href: '#',
-    year: '2017',
-    imageSrc:
-      'https://tailwindui.com/plus-assets/img/ecommerce-images/category-page-04-image-card-01.jpg',
-    imageAlt:
-      'Tall slender porcelain bottle with natural clay textured body and cork stopper.',
-  },
-  {
-    id: 2,
-    name: "L'Amourvèdre",
-    href: '#',
-    year: '2015',
-    imageSrc:
-      'https://tailwindui.com/plus-assets/img/ecommerce-images/category-page-04-image-card-02.jpg',
-    imageAlt:
-      'Olive drab green insulated bottle with flared screw lid and flat top.',
-  },
-  {
-    id: 3,
-    name: 'Le Bon Temps',
-    href: '#',
-    year: '2023',
-    imageSrc:
-      'https://tailwindui.com/plus-assets/img/ecommerce-images/category-page-04-image-card-03.jpg',
-    imageAlt:
-      'Person using a pen to cross a task off a productivity paper card.',
-  },
-  {
-    id: 4,
-    name: 'X',
-    href: '#',
-    year: '2023',
-    imageSrc:
-      'https://tailwindui.com/plus-assets/img/ecommerce-images/category-page-04-image-card-04.jpg',
-    imageAlt:
-      'Hand holding black machined steel mechanical pencil with brass tip and top.',
-  },
-  // More products...
-]; */
-
 function WinesList() {
   const products = useLoaderData();
 
@@ -65,7 +21,7 @@ function WinesList() {
             products.map((product) => (
               <Link
                 key={product._id}
-                href={`/allwines/${product._id}`}
+                to={`/allwines/${product._id}`}
                 className="group"
               >
                 <img

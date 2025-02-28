@@ -1,5 +1,5 @@
 export async function loadWine(id) {
-  const response = await fetch('http://localhost:4000/api/products/' + id);
+  const response = await fetch('http://localhost:4000/api/products/id/' + id);
 
   if (!response.ok) {
     throw new Response(
@@ -8,7 +8,7 @@ export async function loadWine(id) {
     );
   } else {
     const resData = await response.json();
-    return resData.wine;
+    return resData;
   }
 }
 
@@ -24,7 +24,6 @@ export async function loadWines() {
     );
   } else {
     const products = await response.json();
-    console.log(products);
     return products;
   }
 }
@@ -36,11 +35,9 @@ export function winesLoader() {
 
 export async function wineLoader({ params }) {
   const id = params.wineId;
+  const product = await loadWine(id);
 
-  return {
-    wine: loadWine(id),
-    wines: loadWines(),
-  };
+  return product;
 }
 
 /* export async function winesAction({ params, request }) {

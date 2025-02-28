@@ -16,11 +16,17 @@ const router = createBrowserRouter([
       { index: true, element: <Homepage /> },
       {
         path: 'allwines',
-        loader: winesLoader,
-        element: <WinesList />,
+
         children: [
           {
+            path: '',
+            loader: winesLoader,
+            element: <WinesList />,
+          },
+
+          {
             path: ':wineId',
+            id: 'product-detail',
             loader: wineLoader,
             element: <WineDetail />,
           },
