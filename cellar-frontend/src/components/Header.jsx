@@ -35,7 +35,7 @@ function Header() {
         </div>
         <div className="hidden items-center lg:flex lg:gap-x-10">
           <Link
-            href="/"
+            to="/"
             className="text-base/6 hover:border-b-2 hover:border-teal"
           >
             Accueil
@@ -63,19 +63,19 @@ function Header() {
         <div className="hidden lg:flex lg:flex-1 lg:gap-x-4">
           <button
             type="button"
-            className="bg-teal -m-1 p-2 text-white rounded-2xl"
+            className="p-2 rounded-2xl bg-teal text-white shadow-xs hover:bg-midnightgreen focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-midnightgreen"
           >
-            <a href="#" className="text-base/6 font-semibold">
+            <Link to="#" className="text-base/6 font-semibold">
               Créer un compte
-            </a>
+            </Link>
           </button>
           <button
             type="button"
-            className="bg-white border-2 border-teal p-2 text-teal rounded-2xl"
+            className="p-2 rounded-2xl bg-white border-2 border-teal  text-teal hover:border-midnightgreen hover:text-midnightgreen focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-midnightgreen"
           >
-            <a href="#" className="text-base/6 font-semibold">
+            <Link to="/signin" className="text-base/6 font-semibold">
               Se connecter
-            </a>
+            </Link>
           </button>
         </div>
       </nav>
@@ -142,7 +142,7 @@ function Header() {
                   Créer un compte
                 </Link>
                 <Link
-                  to="#"
+                  to="/signin"
                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                 >
                   Se connecter

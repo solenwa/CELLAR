@@ -1,50 +1,49 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import expressAsyncHandler from 'express-async-handler';
-import jwt from 'jsonwebtoken';
 import User from '../models/userModel.js';
 import { isAuth, generateToken } from '../utils.js';
+import Validate from '../middlewares/validate.js';
+import { Login, Register } from '../controllers/userController.js';
+import { check } from 'express-validator';
 
 const userRouter = express.Router();
 
 userRouter.post(
-  '/login',
-  expressAsyncHandler(async (req, res) => {
-    const user = await User.findOne({ email: req.body.email });
-    if (user) {
-      if (bcrypt.compareSync(req.body.password, user.password)) {
-        res.send({
-          _id: user._id,
-          name: user.name,
-          lastName: user.lastName,
-          email: user.email,
-          token: generateToken(user),
-        });
-        return;
-      }
-    }
-    res.status(401).send({ message: 'Invalid email or password' });
-  })
+  '/signup',
+  check('email')
+    .isEmail()
+    .withMessage('Enter a valid email address')
+    .normalizeEmail(),
+  check('first_name')
+    .not()
+    .isEmpty()
+    .withMessage('Your first name is required')
+    .trim()
+    .escape(),
+  check('last_name')
+    .not()
+    .isEmpty()
+    .withMessage('Your last name is required')
+    .trim()
+    .escape(),
+  check('password')
+    .notEmpty()
+    .isLength({ min: 8 })
+    .withMessage('Must be at least 8 characters long'),
+  Validate,
+  Register
 );
 
 userRouter.post(
-  '/signup',
-  expressAsyncHandler(async (req, res) => {
-    const newUser = new User({
-      name: req.body.name,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      password: bcrypt.hashSync(req.body.password),
-    });
-    const user = await newUser.save();
-    res.send({
-      _id: user._id,
-      name: user.name,
-      lastName: user.lastName,
-      email: user.email,
-      token: generateToken(user),
-    });
-  })
+  '/signin',
+  check('email')
+    .isEmail()
+    .withMessage('Enter a valid email address')
+    .normalizeEmail(),
+  check('password').not().isEmpty(),
+  Validate,
+  Login
 );
 
 export default userRouter;
