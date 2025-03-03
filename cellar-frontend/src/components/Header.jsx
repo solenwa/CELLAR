@@ -1,11 +1,10 @@
-'use client';
-
 import { Dialog, DialogPanel } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useRouteLoaderData } from 'react-router-dom';
 
 function Header() {
+  const token = useRouteLoaderData('root');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   return (
     <header className="bg-white">
@@ -48,7 +47,7 @@ function Header() {
           </Link>
 
           <Link
-            to="#"
+            to="/macave"
             className="text-base/6 hover:border-b-2 hover:border-teal"
           >
             Ma Cave
@@ -60,24 +59,38 @@ function Header() {
             Mes dégustations
           </Link>
         </div>
-        <div className="hidden lg:flex lg:flex-1 lg:gap-x-4">
-          <button
-            type="button"
-            className="p-2 rounded-2xl bg-teal text-white shadow-xs hover:bg-midnightgreen focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-midnightgreen"
-          >
-            <Link to="#" className="text-base/6 font-semibold">
-              Créer un compte
-            </Link>
-          </button>
-          <button
-            type="button"
-            className="p-2 rounded-2xl bg-white border-2 border-teal  text-teal hover:border-midnightgreen hover:text-midnightgreen focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-midnightgreen"
-          >
-            <Link to="/signin" className="text-base/6 font-semibold">
-              Se connecter
-            </Link>
-          </button>
-        </div>
+        {!token && (
+          <div className="hidden lg:flex lg:flex-1 lg:gap-x-4">
+            <button
+              type="button"
+              className="p-2 rounded-2xl bg-teal text-white shadow-xs hover:bg-midnightgreen focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-midnightgreen"
+            >
+              <Link to="/signup" className="text-base/6 font-semibold">
+                Créer un compte
+              </Link>
+            </button>
+            <button
+              type="button"
+              className="p-2 rounded-2xl bg-white border-2 border-teal  text-teal hover:border-midnightgreen hover:text-midnightgreen focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-midnightgreen"
+            >
+              <Link to="/signin" className="text-base/6 font-semibold">
+                Se connecter
+              </Link>
+            </button>
+          </div>
+        )}
+        {token && (
+          <div className="hidden lg:flex lg:flex-1 lg:gap-x-4">
+            <button
+              type="button"
+              className="p-2 rounded-2xl bg-teal text-white shadow-xs hover:bg-midnightgreen focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-midnightgreen"
+            >
+              <Link to="/logout" className="text-base/6 font-semibold">
+                Se déconnecter
+              </Link>
+            </button>
+          </div>
+        )}
       </nav>
 
       <Dialog
@@ -122,7 +135,7 @@ function Header() {
                   À boire
                 </Link>
                 <Link
-                  to="#"
+                  to="/macave"
                   className="-mx-3 block rounded-lg px-3 py-2 text-base/7  text-gray-900 hover:bg-gray-50"
                 >
                   Ma Cave
@@ -135,18 +148,30 @@ function Header() {
                 </Link>
               </div>
               <div className="py-6">
-                <Link
-                  to="#"
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  Créer un compte
-                </Link>
-                <Link
-                  to="/signin"
-                  className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                >
-                  Se connecter
-                </Link>
+                {!token && (
+                  <>
+                    <Link
+                      to="/signup"
+                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                    >
+                      Créer un compte
+                    </Link>
+                    <Link
+                      to="/signin"
+                      className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                    >
+                      Se connecter
+                    </Link>
+                  </>
+                )}
+                {token && (
+                  <Link
+                    to="/signup"
+                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                  >
+                    Se déconnecter
+                  </Link>
+                )}
               </div>
             </div>
           </div>

@@ -102,26 +102,6 @@ function Signuppage() {
             </div>
 
             <div>
-              <div className="flex items-center justify-between">
-                <label
-                  htmlFor="confirmPassword"
-                  className="block text-sm/6 font-medium text-gray-900"
-                >
-                  Confirmer le mot de passe
-                </label>
-              </div>
-              <div className="mt-2">
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type="password"
-                  required
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-midnightgreen sm:text-sm/6"
-                />
-              </div>
-            </div>
-
-            <div>
               <button
                 type="submit"
                 className="flex w-full justify-center rounded-md bg-teal px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-midnightgreen focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-midnightgreen"

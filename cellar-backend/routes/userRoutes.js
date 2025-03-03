@@ -4,7 +4,7 @@ import expressAsyncHandler from 'express-async-handler';
 import User from '../models/userModel.js';
 import { isAuth, generateToken } from '../utils.js';
 import Validate from '../middlewares/validate.js';
-import { Login, Register } from '../controllers/userController.js';
+import { Login, Logout, Register } from '../controllers/userController.js';
 import { check } from 'express-validator';
 
 const userRouter = express.Router();
@@ -29,8 +29,8 @@ userRouter.post(
     .escape(),
   check('password')
     .notEmpty()
-    .isLength({ min: 8 })
-    .withMessage('Must be at least 8 characters long'),
+    .isLength({ min: 5 })
+    .withMessage('Must be at least 5 characters long'),
   Validate,
   Register
 );

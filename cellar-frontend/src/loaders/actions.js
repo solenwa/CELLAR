@@ -6,9 +6,10 @@ export async function signinAction({ request }) {
     email: data.get('email'),
     password: data.get('password'),
   };
+  console.log(authData);
 
   const response = await fetch('http://localhost:4000/api/users/signin', {
-    method: 'POST',
+    method: 'post',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -73,5 +74,11 @@ export async function signupAction({ request }) {
   expiration.setHours(expiration.getHours() + 1);
   localStorage.setItem('expiration', expiration.toISOString());
 
+  return redirect('/');
+}
+
+export function logoutAction() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('expiration');
   return redirect('/');
 }

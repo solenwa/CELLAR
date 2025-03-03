@@ -1,4 +1,4 @@
-import User from '../models/User.js';
+import User from '../models/userModel.js';
 import bcrypt from 'bcryptjs';
 import { generateToken } from '../utils.js';
 
@@ -37,7 +37,7 @@ export async function Register(req, res) {
   res.end();
 }
 
-/* export async function Login(req, res) {
+export async function Login(req, res) {
   // Get variables for the login process
   const { email } = req.body;
   try {
@@ -82,12 +82,10 @@ export async function Register(req, res) {
   }
   res.end();
 }
- */
 
-export async function Login(req, res) {
-  res.status(200).json({
-    status: 'success',
-    data: [],
-    message: 'All good.',
+export function Logout(req, res) {
+  req.user.deleteToken(req.token, (err, user) => {
+    if (err) return res.status(400).send(err);
+    res.sendStatus(200);
   });
 }

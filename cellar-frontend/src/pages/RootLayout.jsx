@@ -4,13 +4,13 @@ import Footer from '../components/Footer';
 
 function RootLayout() {
   return (
-    <body className="flex flex-col justify-between">
+    <div className="flex flex-col justify-between">
       <Header />
       <main>
         <Outlet />
       </main>
       <Footer />
-    </body>
+    </div>
   );
 }
 
