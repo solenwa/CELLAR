@@ -9,7 +9,7 @@ function Signuppage() {
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
             alt="The Cellar"
-            src="https://tailwindui.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
+            src="/src/assets/logo-highres.png"
             className="mx-auto h-10 w-auto"
           />
           <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
@@ -102,10 +102,7 @@ function Signuppage() {
             </div>
 
             <div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-teal px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-midnightgreen focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-midnightgreen"
-              >
+              <button className="flex w-full justify-center rounded-md bg-teal px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-midnightgreen focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-midnightgreen">
                 Créer le compte
               </button>
             </div>
@@ -114,7 +111,7 @@ function Signuppage() {
           <p className="mt-10 text-center text-sm/6 text-gray-500">
             Vous avez déjà un compte?{' '}
             <Link
-              to="/signup"
+              to="/signin"
               className="font-semibold text-teal hover:text-midnightgreen"
             >
               Se connecter

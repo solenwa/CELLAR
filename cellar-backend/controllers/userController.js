@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { generateToken } from '../utils.js';
 
 export async function Register(req, res) {
-  try {
+ try {
     // Check if user already exists
     const existingUser = await User.findOne({ email: req.body.email });
     if (existingUser)
@@ -34,7 +34,7 @@ export async function Register(req, res) {
       message: 'Internal Server Error',
     });
   }
-  res.end();
+  res.end(); 
 }
 
 export async function Login(req, res) {

@@ -1,7 +1,7 @@
 import { Dialog, DialogPanel } from '@headlessui/react';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
-import { Link, useRouteLoaderData } from 'react-router-dom';
+import { Form, Link, useRouteLoaderData } from 'react-router-dom';
 
 function Header() {
   const token = useRouteLoaderData('root');
@@ -13,13 +13,12 @@ function Header() {
         className="mx-auto flex w-screen justify-between p-6 lg:px-8 lg:gap-x-12"
       >
         <div className="flex lg:flex-1 ">
-          <Link to="/" className="items-center flex">
+          <Link to="/" className="items-center flex pl-10">
             <img
               alt="The Cellar's logo"
-              src="https://tailwindui.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600"
-              className="h-8 w-auto"
+              src="/src/assets/logo-highres.png"
+              className="h-16 w-auto"
             />
-            <span className="px-2">The Cellar</span>
           </Link>
         </div>
         <div className="flex lg:hidden">
@@ -165,12 +164,11 @@ function Header() {
                   </>
                 )}
                 {token && (
-                  <Link
-                    to="/signup"
-                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                  >
-                    Se déconnecter
-                  </Link>
+                  <Form action="/logout" method="post">
+                    <button className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50">
+                      Se déconnecter
+                    </button>
+                  </Form>
                 )}
               </div>
             </div>

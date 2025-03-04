@@ -74,7 +74,7 @@ export async function signupAction({ request }) {
   expiration.setHours(expiration.getHours() + 1);
   localStorage.setItem('expiration', expiration.toISOString());
 
-  return redirect('/');
+  return redirect('/signin');
 }
 
 export function logoutAction() {

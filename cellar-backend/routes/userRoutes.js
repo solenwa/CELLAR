@@ -15,13 +15,13 @@ userRouter.post(
     .isEmail()
     .withMessage('Enter a valid email address')
     .normalizeEmail(),
-  check('first_name')
+  check('name')
     .not()
     .isEmpty()
     .withMessage('Your first name is required')
     .trim()
     .escape(),
-  check('last_name')
+  check('lastName')
     .not()
     .isEmpty()
     .withMessage('Your last name is required')

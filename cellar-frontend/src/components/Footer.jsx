@@ -11,7 +11,8 @@ function Footer() {
           La plateforme pour les amoureux du vin.
         </p>
         <FontAwesomeIcon icon={faLinkedin} className="fa-2xl" />
-        <div className="mt-6 flex flex-col max-w-md gap-x-4">
+
+        {/* <div className="mt-6 flex flex-col max-w-md gap-x-4">
           <label htmlFor="email-address" className="font-light py-2 ">
             S&apos;inscrire à la newsletter
           </label>
@@ -46,7 +47,7 @@ function Footer() {
               </svg>
             </button>
           </div>
-        </div>
+        </div> */}
       </div>
       <div className="mx-auto grid grid-cols-1 gap-x-8 py-12 lg:grid-cols-2 font-normal">
         <Link href="#" className="">
