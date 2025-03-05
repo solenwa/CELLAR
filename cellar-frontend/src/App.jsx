@@ -52,7 +52,9 @@ const router = createBrowserRouter([
         path: 'logout',
         action: logoutAction,
       },
-      { path: 'macave', element: <MyCellarPage /> },
+      { path: 'macave',
+        loader: winesLoader,
+         element: <MyCellarPage /> },
     ],
   },
 ]);
