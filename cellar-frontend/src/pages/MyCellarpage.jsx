@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Link, useLoaderData } from "react-router-dom"
 import {
     Dialog,
@@ -31,11 +31,10 @@ const sortOptions = [
     { name: "Price: High to Low", href: "#", current: false },
 ]
 const subCategories = [
-    { name: "À consommer dans le mois", href: "#" },
-    { name: "Mes favoris", href: "#" },
-    { name: "Travel Bags", href: "#" },
-    { name: "Hip Bags", href: "#" },
-    { name: "Laptop Sleeves", href: "#" },
+    { name: "Toutes les bouteilles" },
+    { name: "À consommer dans le mois" },
+    { name: "Mes favoris" },
+    { name: "Rouges" },
 ]
 const filters = [
     {
@@ -63,8 +62,8 @@ const filters = [
         id: "taille",
         name: "Taille",
         options: [
-            { value: "standard", label: "Standard", checked: true },
-            { value: "magnum", label: "Magnum", checked: false },
+            { value: "standard", label: "Standard", checked: false },
+            { value: "magnum", label: "Magnum", checked: true },
         ],
     },
 ]
@@ -77,8 +76,27 @@ export default function MyCellarpage() {
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
     const products = useLoaderData()
     const [sortState, setSortState] = useState("Nom de Domaine (A-Z)")
+    //   const [filterTags, setFilterTags] = useState([])
+    const [subCategoriesFilter, setSubCategoriesFilter] = useState("Tous")
+    const [filteredProducts, setFilteredProducts] = useState(products)
 
-    // 👇️ Sort by Année property ASCENDING (1 - 100)
+    useEffect(() => {
+        if (subCategoriesFilter === "Toutes les bouteilles") {
+            setFilteredProducts(products)
+        } else if (subCategoriesFilter === "Rouges") {
+            const RedBottles = products.filter((product) => {
+                return product.couleur == "Rouge"
+            })
+            setFilteredProducts(RedBottles)
+        } else if (subCategoriesFilter === "À consommer dans le mois") {
+            const ExpiringBottles = products.filter((product) => {
+                return product.millesime < 2010
+            })
+            setFilteredProducts(ExpiringBottles)
+        }
+    }, [subCategoriesFilter, products])
+
+    /*     // 👇️ Sort by Année property ASCENDING (1 - 100)
     const anneeAscending = (a, b) => a.annee - b.annee
     // 👇️ Sort by Année property DESCENDING (100 - 1)
     const anneeDescending = (a, b) => b.annee - a.annee
@@ -93,7 +111,7 @@ export default function MyCellarpage() {
         "Nom de Domaine (Z-A)": { method: (a, b) => domaineDescending },
         "Année (croissant)": { method: (a, b) => anneeAscending },
         "Année (décroissant)": { method: (a, b) => anneeDescending },
-    }
+    } */
 
     if (products.isLoading) {
         return <div>Loading...</div>
@@ -138,7 +156,6 @@ export default function MyCellarpage() {
                                     />
                                 </button>
                             </div>
-
                             {/* Filters */}
                             <form className="mt-4 border-t border-gray-200">
                                 <h3 className="sr-only">Catégories</h3>
@@ -192,6 +209,7 @@ export default function MyCellarpage() {
                                                             <div className="flex h-5 shrink-0 items-center">
                                                                 <div className="group grid size-4 grid-cols-1">
                                                                     <input
+                                                                        // onChange={}
                                                                         defaultValue={
                                                                             option.value
                                                                         }
@@ -251,6 +269,7 @@ export default function MyCellarpage() {
                         </h1>
 
                         <div className="flex items-center">
+                            {/* Sort Options */}
                             <Menu
                                 as="div"
                                 className="relative inline-block text-left"
@@ -272,8 +291,13 @@ export default function MyCellarpage() {
                                     <div className="py-1">
                                         {sortOptions.map((option) => (
                                             <MenuItem key={option.name}>
-                                                <a
-                                                    href={option.href}
+                                                <p
+                                                    value={option.name}
+                                                    onClick={() =>
+                                                        setSortState(
+                                                            option.name,
+                                                        )
+                                                    }
                                                     className={classNames(
                                                         option.current
                                                             ? "font-medium text-gray-900"
@@ -282,7 +306,7 @@ export default function MyCellarpage() {
                                                     )}
                                                 >
                                                     {option.name}
-                                                </a>
+                                                </p>
                                             </MenuItem>
                                         ))}
                                     </div>
@@ -331,9 +355,25 @@ export default function MyCellarpage() {
                                 >
                                     {subCategories.map((category) => (
                                         <li key={category.name}>
-                                            <a href={category.href}>
+                                            <label>
+                                                <input
+                                                    type="checkbox"
+                                                    style={{
+                                                        appearance: "none",
+                                                    }}
+                                                    value={category.name}
+                                                    checked={
+                                                        subCategoriesFilter ===
+                                                        category.name
+                                                    }
+                                                    onChange={({ target }) =>
+                                                        setSubCategoriesFilter(
+                                                            target.value,
+                                                        )
+                                                    }
+                                                />
                                                 {category.name}
-                                            </a>
+                                            </label>
                                         </li>
                                     ))}
                                 </ul>
@@ -372,6 +412,12 @@ export default function MyCellarpage() {
                                                             <div className="flex h-5 shrink-0 items-center">
                                                                 <div className="group grid size-4 grid-cols-1">
                                                                     <input
+                                                                        onChange={(
+                                                                            option,
+                                                                        ) => {
+                                                                            option.checked !=
+                                                                                option.checked
+                                                                        }}
                                                                         defaultValue={
                                                                             option.value
                                                                         }
@@ -428,8 +474,8 @@ export default function MyCellarpage() {
                             <div className="lg:col-span-3">
                                 <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
                                     {products &&
-                                        products
-                                            .sort(sortMethods[sortState].method)
+                                        filteredProducts
+                                            //.sort(sortMethods[sortState].method)
                                             .map((product) => (
                                                 <Link
                                                     key={product._id}
