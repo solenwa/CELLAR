@@ -20,15 +20,16 @@ import {
     PlusIcon,
     Squares2X2Icon,
 } from "@heroicons/react/20/solid"
+import { multiPropsFilter, sortBasedOnKey } from "../loaders/actions"
 
 const sortOptions = [
-    { name: "Nom de Domaine (A-Z)", href: "#", current: true },
-    { name: "Nom de Domaine (Z-A)", href: "#", current: false },
-    { name: "Année (croissant)", href: "#", current: false },
-    { name: "Année (décroissant)", href: "#", current: false },
-    { name: "Quantité (croissant)", href: "#", current: false },
-    { name: "Quantité (décroissant)", href: "#", current: false },
-    { name: "Price: High to Low", href: "#", current: false },
+    { name: "Nom de Domaine (A-Z)", id: "domaine", order: "ascending" },
+    { name: "Nom de Domaine (Z-A)", id: "domaine", order: "descending" },
+    { name: "Année (croissant)", id: "millesime", order: "ascending" },
+    { name: "Année (décroissant)", id: "millesime", order: "descending" },
+    { name: "Quantité (croissant)", id: "quantite", order: "ascending" },
+    { name: "Quantité (décroissant)", id: "quantite", order: "descending" },
+    { name: "Price: High to Low", id: "#", order: "ascending" },
 ]
 const subCategories = [
     { name: "Toutes les bouteilles" },
@@ -38,32 +39,32 @@ const subCategories = [
 ]
 const filters = [
     {
-        id: "type",
-        name: "Type",
+        id: "couleur",
+        name: "Couleur",
         options: [
-            { value: "blanc", label: "Blanc", checked: false },
-            { value: "rose", label: "Rosé", checked: false },
-            { value: "rouge", label: "Rouge", checked: true },
-            { value: "effervescent", label: "Effervescent", checked: false },
-            { value: "doux", label: "Vin doux naturel", checked: false },
+            { value: "Blanc", label: "Blanc", checked: false },
+            { value: "Rose", label: "Rosé", checked: false },
+            { value: "Rouge", label: "Rouge", checked: false },
+            { value: "Effervescent", label: "Effervescent", checked: false },
+            { value: "Doux", label: "Vin doux naturel", checked: false },
         ],
     },
     {
         id: "pays",
         name: "Pays",
         options: [
-            { value: "france", label: "France", checked: true },
-            { value: "italie", label: "Italie", checked: false },
-            { value: "espagne", label: "Espagne", checked: false },
-            { value: "argentine", label: "Argentine", checked: false },
+            { value: "France", label: "France", checked: false },
+            { value: "Italie", label: "Italie", checked: false },
+            { value: "Espagne", label: "Espagne", checked: false },
+            { value: "Argentine", label: "Argentine", checked: false },
         ],
     },
     {
         id: "taille",
         name: "Taille",
         options: [
-            { value: "standard", label: "Standard", checked: false },
-            { value: "magnum", label: "Magnum", checked: true },
+            { value: "Standard", label: "Standard", checked: false },
+            { value: "Magnum", label: "Magnum", checked: false },
         ],
     },
 ]
@@ -75,12 +76,42 @@ function classNames(...classes) {
 export default function MyCellarpage() {
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
     const products = useLoaderData()
-    const [sortState, setSortState] = useState("Nom de Domaine (A-Z)")
-    //   const [filterTags, setFilterTags] = useState([])
-    const [subCategoriesFilter, setSubCategoriesFilter] = useState("Tous")
     const [filteredProducts, setFilteredProducts] = useState(products)
+    const [sortedProducts, setSortedProducts] = useState(products)
+    const [sortState, setSortState] = useState(["domaine", "ascending"])
+    const [subCategoriesFilter, setSubCategoriesFilter] = useState("Tous")
+    const [filterTags, setFilterTags] = useState({
+        taille: { Standard: false, Magnum: false },
+        couleur: {
+            Rouge: false,
+            Blanc: false,
+            Rose: false,
+            Effervescent: false,
+            Doux: false,
+        },
+        pays: {
+            France: false,
+            Italie: false,
+            Espagne: false,
+            Argentine: false,
+        },
+    })
+
+    const handleFilters = (filterOption, event) => {
+        filterOption.checked = !filterOption.checked
+
+        setFilterTags((prevState) => ({
+            ...prevState,
+            [event.target.name]: {
+                ...prevState[event.target.name],
+                [event.target.value]:
+                    !prevState[event.target.name][event.target.value],
+            },
+        }))
+    }
 
     useEffect(() => {
+        // TO FILTER BY SUBCATEGORY
         if (subCategoriesFilter === "Toutes les bouteilles") {
             setFilteredProducts(products)
         } else if (subCategoriesFilter === "Rouges") {
@@ -94,24 +125,46 @@ export default function MyCellarpage() {
             })
             setFilteredProducts(ExpiringBottles)
         }
-    }, [subCategoriesFilter, products])
 
-    /*     // 👇️ Sort by Année property ASCENDING (1 - 100)
-    const anneeAscending = (a, b) => a.annee - b.annee
-    // 👇️ Sort by Année property DESCENDING (100 - 1)
-    const anneeDescending = (a, b) => b.annee - a.annee
-    // 👇️ Sort by Domaine property ASCENDING (A - Z)
-    const domaineAscending = (a, b) => (a.domaine > b.domaine ? 1 : -1)
-    // 👇️ Sort by String property DESCENDING (Z - A)
-    const domaineDescending = (a, b) => (a.domaine > b.domaine ? -1 : 1)
+        // TO FILTER BY CATEGORY
+        const filteredCollected = () => {
+            const collectedTrueKeys = {
+                couleur: [],
+                taille: [],
+                pays: [],
+            }
 
-    const sortMethods = {
-        none: { method: (a, b) => null },
-        "Nom de Domaine (A-Z)": { method: (a, b) => domaineAscending },
-        "Nom de Domaine (Z-A)": { method: (a, b) => domaineDescending },
-        "Année (croissant)": { method: (a, b) => anneeAscending },
-        "Année (décroissant)": { method: (a, b) => anneeDescending },
-    } */
+            const { couleur, taille, pays } = filterTags
+            for (let couleurKey in couleur) {
+                if (couleur[couleurKey])
+                    collectedTrueKeys.couleur.push(couleurKey)
+            }
+            for (let tailleKey in taille) {
+                if (taille[tailleKey]) collectedTrueKeys.taille.push(tailleKey)
+            }
+            for (let paysKey in pays) {
+                if (pays[paysKey]) collectedTrueKeys.pays.push(paysKey)
+            }
+            return collectedTrueKeys
+        }
+
+        let filteredKeys = filteredCollected()
+        let tempItems = multiPropsFilter(products, filteredKeys)
+
+        if (tempItems.length > 0) {
+            setFilteredProducts(tempItems)
+        } else {
+            // write temporary message
+        }
+
+        //TO SORT
+        let tempSorted = sortBasedOnKey(
+            filteredProducts,
+            sortState[0],
+            sortState[1],
+        )
+        setSortedProducts(tempSorted)
+    }, [subCategoriesFilter, products, filterTags, sortState])
 
     if (products.isLoading) {
         return <div>Loading...</div>
@@ -294,9 +347,10 @@ export default function MyCellarpage() {
                                                 <p
                                                     value={option.name}
                                                     onClick={() =>
-                                                        setSortState(
-                                                            option.name,
-                                                        )
+                                                        setSortState([
+                                                            option.id,
+                                                            option.order,
+                                                        ])
                                                     }
                                                     className={classNames(
                                                         option.current
@@ -413,11 +467,13 @@ export default function MyCellarpage() {
                                                                 <div className="group grid size-4 grid-cols-1">
                                                                     <input
                                                                         onChange={(
-                                                                            option,
-                                                                        ) => {
-                                                                            option.checked !=
-                                                                                option.checked
-                                                                        }}
+                                                                            event,
+                                                                        ) =>
+                                                                            handleFilters(
+                                                                                option,
+                                                                                event,
+                                                                            )
+                                                                        }
                                                                         defaultValue={
                                                                             option.value
                                                                         }
@@ -425,7 +481,7 @@ export default function MyCellarpage() {
                                                                             option.checked
                                                                         }
                                                                         id={`filter-${section.id}-${optionIdx}`}
-                                                                        name={`${section.id}[]`}
+                                                                        name={`${section.id}`}
                                                                         type="checkbox"
                                                                         className="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-indigo-600 checked:bg-indigo-600 indeterminate:border-indigo-600 indeterminate:bg-indigo-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto"
                                                                     />
@@ -474,7 +530,7 @@ export default function MyCellarpage() {
                             <div className="lg:col-span-3">
                                 <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
                                     {products &&
-                                        filteredProducts
+                                        sortedProducts
                                             //.sort(sortMethods[sortState].method)
                                             .map((product) => (
                                                 <Link
