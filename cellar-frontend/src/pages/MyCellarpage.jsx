@@ -31,12 +31,13 @@ const sortOptions = [
     { name: "Quantité (décroissant)", id: "quantite", order: "descending" },
     { name: "Price: High to Low", id: "#", order: "ascending" },
 ]
-const subCategories = [
+/* const subCategories = [
     { name: "Toutes les bouteilles" },
     { name: "À consommer dans le mois" },
     { name: "Mes favoris" },
     { name: "Rouges" },
-]
+] */
+
 const filters = [
     {
         id: "couleur",
@@ -76,10 +77,9 @@ function classNames(...classes) {
 export default function MyCellarpage() {
     const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
     const products = useLoaderData()
-    const [filteredProducts, setFilteredProducts] = useState(products)
     const [sortedProducts, setSortedProducts] = useState(products)
     const [sortState, setSortState] = useState(["domaine", "ascending"])
-    const [subCategoriesFilter, setSubCategoriesFilter] = useState("Tous")
+    //    const [subCategoriesFilter, setSubCategoriesFilter] = useState("Toutes les bouteilles")
     const [filterTags, setFilterTags] = useState({
         taille: { Standard: false, Magnum: false },
         couleur: {
@@ -97,6 +97,7 @@ export default function MyCellarpage() {
         },
     })
 
+    //TO OBTAIN LIST OF FILTERS SELECTED
     const handleFilters = (filterOption, event) => {
         filterOption.checked = !filterOption.checked
 
@@ -110,23 +111,8 @@ export default function MyCellarpage() {
         }))
     }
 
-    useEffect(() => {
-        // TO FILTER BY SUBCATEGORY
-        if (subCategoriesFilter === "Toutes les bouteilles") {
-            setFilteredProducts(products)
-        } else if (subCategoriesFilter === "Rouges") {
-            const RedBottles = products.filter((product) => {
-                return product.couleur == "Rouge"
-            })
-            setFilteredProducts(RedBottles)
-        } else if (subCategoriesFilter === "À consommer dans le mois") {
-            const ExpiringBottles = products.filter((product) => {
-                return product.millesime < 2010
-            })
-            setFilteredProducts(ExpiringBottles)
-        }
-
-        // TO FILTER BY CATEGORY
+    // TO OBTAIN THE LIST OF PRODUCTS DEPENDING ON FILTERS SELECTED
+    const filterProducts = () => {
         const filteredCollected = () => {
             const collectedTrueKeys = {
                 couleur: [],
@@ -151,20 +137,41 @@ export default function MyCellarpage() {
         let filteredKeys = filteredCollected()
         let tempItems = multiPropsFilter(products, filteredKeys)
 
-        if (tempItems.length > 0) {
-            setFilteredProducts(tempItems)
-        } else {
-            // write temporary message
+        return tempItems
+    }
+    let filteredProducts = filterProducts()
+
+    useEffect(() => {
+        /*         // TO FILTER BY SUBCATEGORY
+        const subfilterProducts = () => {
+            if (subCategoriesFilter === "Toutes les bouteilles") {
+                setFilteredProducts(products)
+            } else if (subCategoriesFilter === "Rouges") {
+                const RedBottles = products.filter((product) => {
+                    return product.couleur == "Rouge"
+                })
+                setFilteredProducts(RedBottles)
+            } else if (subCategoriesFilter === "À consommer dans le mois") {
+                const ExpiringBottles = products.filter((product) => {
+                    return product.millesime < 2010
+                })
+                setFilteredProducts(ExpiringBottles)
+            }
         }
+        subfilterProducts() */
+
+        //       filterProducts()
 
         //TO SORT
-        let tempSorted = sortBasedOnKey(
-            filteredProducts,
-            sortState[0],
-            sortState[1],
-        )
-        setSortedProducts(tempSorted)
-    }, [subCategoriesFilter, products, filterTags, sortState])
+        if (filteredProducts.length > 0) {
+            let tempSorted = sortBasedOnKey(
+                filteredProducts,
+                sortState[0],
+                sortState[1],
+            )
+            setSortedProducts(tempSorted)
+        }
+    }, [products, filterTags, sortState])
 
     if (products.isLoading) {
         return <div>Loading...</div>
@@ -212,7 +219,7 @@ export default function MyCellarpage() {
                             {/* Filters */}
                             <form className="mt-4 border-t border-gray-200">
                                 <h3 className="sr-only">Catégories</h3>
-                                <ul
+                                {/* <ul
                                     role="list"
                                     className="px-2 py-3 font-medium text-gray-900"
                                 >
@@ -226,7 +233,7 @@ export default function MyCellarpage() {
                                             </Link>
                                         </li>
                                     ))}
-                                </ul>
+                                </ul> */}
 
                                 {filters.map((section) => (
                                     <Disclosure
@@ -262,7 +269,14 @@ export default function MyCellarpage() {
                                                             <div className="flex h-5 shrink-0 items-center">
                                                                 <div className="group grid size-4 grid-cols-1">
                                                                     <input
-                                                                        // onChange={}
+                                                                        onChange={(
+                                                                            event,
+                                                                        ) =>
+                                                                            handleFilters(
+                                                                                option,
+                                                                                event,
+                                                                            )
+                                                                        }
                                                                         defaultValue={
                                                                             option.value
                                                                         }
@@ -403,7 +417,8 @@ export default function MyCellarpage() {
                             {/* Filters */}
                             <form className="hidden lg:block">
                                 <h3 className="sr-only">Catégories</h3>
-                                <ul
+                                {/* Subcategories Filters */}
+                                {/* <ul
                                     role="list"
                                     className="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900"
                                 >
@@ -430,8 +445,9 @@ export default function MyCellarpage() {
                                             </label>
                                         </li>
                                     ))}
-                                </ul>
+                                </ul>  */}
 
+                                {/* Complete Filters */}
                                 {filters.map((section) => (
                                     <Disclosure
                                         key={section.id}
@@ -529,29 +545,33 @@ export default function MyCellarpage() {
                             {/* Product grid */}
                             <div className="lg:col-span-3">
                                 <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-                                    {products &&
-                                        sortedProducts
-                                            //.sort(sortMethods[sortState].method)
-                                            .map((product) => (
-                                                <Link
-                                                    key={product._id}
-                                                    to={`/allwines/${product._id}`}
-                                                    className="group"
-                                                >
-                                                    <img
-                                                        alt={`Bottle of ${product.domaine}`}
-                                                        src={product.image.url}
-                                                        className="xl:aspect-7/8 aspect-square w-full rounded-lg bg-gray-200 object-cover group-hover:opacity-75"
-                                                    />
-                                                    <h3 className="mt-4 text-sm text-gray-700">
-                                                        {product.cuvee} -{" "}
-                                                        {product.millesime}
-                                                    </h3>
-                                                    <p className="mt-1 text-lg font-medium text-gray-900">
-                                                        {product.domaine}
-                                                    </p>
-                                                </Link>
-                                            ))}
+                                    {filteredProducts.length > 0 &&
+                                        sortedProducts.map((product) => (
+                                            <Link
+                                                key={product._id}
+                                                to={`/allwines/${product._id}`}
+                                                className="group"
+                                            >
+                                                <img
+                                                    alt={`Bottle of ${product.domaine}`}
+                                                    src={product.image.url}
+                                                    className="xl:aspect-7/8 aspect-square w-full rounded-lg bg-gray-200 object-cover group-hover:opacity-75"
+                                                />
+                                                <h3 className="mt-4 text-sm text-gray-700">
+                                                    {product.cuvee} -{" "}
+                                                    {product.millesime}
+                                                </h3>
+                                                <p className="mt-1 text-lg font-medium text-gray-900">
+                                                    {product.domaine}
+                                                </p>
+                                            </Link>
+                                        ))}
+                                    {filteredProducts.length === 0 && (
+                                        <h3 className="col-span-3">
+                                            Oops! It looks like no bottles match
+                                            your criteria.
+                                        </h3>
+                                    )}
                                 </div>
                             </div>
                         </div>
