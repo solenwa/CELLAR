@@ -21,6 +21,7 @@ import {
     Squares2X2Icon,
 } from "@heroicons/react/20/solid"
 import { multiPropsFilter, sortBasedOnKey } from "../loaders/actions"
+import RangeSlider from "../components/Rangeslider"
 
 const sortOptions = [
     { name: "Nom de Domaine (A-Z)", id: "domaine", order: "ascending" },
@@ -96,6 +97,10 @@ export default function MyCellarpage() {
             Argentine: false,
         },
     })
+    const [yearFilterValue, setYearFilterValue] = useState({
+        min: 1980,
+        max: 2025,
+    })
 
     //TO OBTAIN LIST OF FILTERS SELECTED
     const handleFilters = (filterOption, event) => {
@@ -110,36 +115,6 @@ export default function MyCellarpage() {
             },
         }))
     }
-
-    // TO OBTAIN THE LIST OF PRODUCTS DEPENDING ON FILTERS SELECTED
-    const filterProducts = () => {
-        const filteredCollected = () => {
-            const collectedTrueKeys = {
-                couleur: [],
-                taille: [],
-                pays: [],
-            }
-
-            const { couleur, taille, pays } = filterTags
-            for (let couleurKey in couleur) {
-                if (couleur[couleurKey])
-                    collectedTrueKeys.couleur.push(couleurKey)
-            }
-            for (let tailleKey in taille) {
-                if (taille[tailleKey]) collectedTrueKeys.taille.push(tailleKey)
-            }
-            for (let paysKey in pays) {
-                if (pays[paysKey]) collectedTrueKeys.pays.push(paysKey)
-            }
-            return collectedTrueKeys
-        }
-
-        let filteredKeys = filteredCollected()
-        let tempItems = multiPropsFilter(products, filteredKeys)
-
-        return tempItems
-    }
-    let filteredProducts = filterProducts()
 
     useEffect(() => {
         /*         // TO FILTER BY SUBCATEGORY
@@ -160,18 +135,54 @@ export default function MyCellarpage() {
         }
         subfilterProducts() */
 
-        //       filterProducts()
+        const filterProducts = () => {
+            const filteredCollected = () => {
+                const collectedTrueKeys = {
+                    couleur: [],
+                    taille: [],
+                    pays: [],
+                }
 
-        //TO SORT
-        if (filteredProducts.length > 0) {
-            let tempSorted = sortBasedOnKey(
-                filteredProducts,
+                const { couleur, taille, pays } = filterTags
+                for (let couleurKey in couleur) {
+                    if (couleur[couleurKey])
+                        collectedTrueKeys.couleur.push(couleurKey)
+                }
+                for (let tailleKey in taille) {
+                    if (taille[tailleKey])
+                        collectedTrueKeys.taille.push(tailleKey)
+                }
+                for (let paysKey in pays) {
+                    if (pays[paysKey]) collectedTrueKeys.pays.push(paysKey)
+                }
+                return collectedTrueKeys
+            }
+
+            let filteredKeys = filteredCollected()
+
+            // TO FILTER by TAGS
+            let tempItems = multiPropsFilter(products, filteredKeys)
+
+            // TO FILTER BY DATE
+            let tempItems2 = tempItems.filter((product) => {
+                return (
+                    product.millesime >= yearFilterValue.min &&
+                    product.millesime <= yearFilterValue.max
+                )
+            })
+
+            // TO SORT
+            let tempItems3 = sortBasedOnKey(
+                tempItems2,
                 sortState[0],
                 sortState[1],
             )
-            setSortedProducts(tempSorted)
+
+            return tempItems3
         }
-    }, [products, filterTags, sortState])
+        setSortedProducts(filterProducts())
+
+    }, [products, filterTags, sortState, yearFilterValue])
 
     if (products.isLoading) {
         return <div>Loading...</div>
@@ -448,6 +459,13 @@ export default function MyCellarpage() {
                                 </ul>  */}
 
                                 {/* Complete Filters */}
+                                <RangeSlider
+                                    min={1980}
+                                    max={2025}
+                                    step={1}
+                                    value={yearFilterValue}
+                                    onChange={setYearFilterValue}
+                                />
                                 {filters.map((section) => (
                                     <Disclosure
                                         key={section.id}
@@ -545,7 +563,7 @@ export default function MyCellarpage() {
                             {/* Product grid */}
                             <div className="lg:col-span-3">
                                 <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-                                    {filteredProducts.length > 0 &&
+                                    {sortedProducts.length > 0 &&
                                         sortedProducts.map((product) => (
                                             <Link
                                                 key={product._id}
@@ -566,7 +584,7 @@ export default function MyCellarpage() {
                                                 </p>
                                             </Link>
                                         ))}
-                                    {filteredProducts.length === 0 && (
+                                    {sortedProducts.length === 0 && (
                                         <h3 className="col-span-3">
                                             Oops! It looks like no bottles match
                                             your criteria.

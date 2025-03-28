@@ -11,6 +11,7 @@ const productSchema = new mongoose.Schema(
     region: { type: String, required: true },
     taille: { type: String, required: true },
     cepages: { type: Object, required: false},
+    favori: { type: Boolean, required: false},
     image: {
       publicId: {
         type: String,
