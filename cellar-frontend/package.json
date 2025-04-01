@@ -18,6 +18,7 @@
         "@headlessui/react": "^2.2.0",
         "@heroicons/react": "^2.2.0",
         "@tailwindcss/vite": "^4.0.8",
+        "multiselect-react-dropdown": "^2.0.25",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "react-router-dom": "^7.2.0",
